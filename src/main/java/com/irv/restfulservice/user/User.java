@@ -6,9 +6,9 @@ import java.util.Date;
 
 public class User {
     private Integer id;
-    @Size(min = 2, max = 6)
+    @Size(min = 2, max = 6,message = "El nombre es muy pequeño o muy largo")
     private String name;
-    @Past //la fecha tiene que ser antigua a hoy
+    @Past(message = "La fecha aun no ha pasado") //la fecha tiene que ser antigua a hoy
     private Date birthDate;
 
     public User() {
