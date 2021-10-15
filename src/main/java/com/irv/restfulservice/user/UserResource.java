@@ -14,7 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 
 @RestController
-public class UserResource {
+public class UserResource {//Se puede llamar Resource O Controller
     @Autowired
     private UserDaoService userDaoService;
 
