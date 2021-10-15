@@ -1,10 +1,13 @@
 package com.irv.restfulservice.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.persistence.EntityManager;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.Iterator;
@@ -16,18 +19,32 @@ public class UserResource {
     private UserDaoService userDaoService;
 
     @GetMapping("/user")
-    public List<User> findAll() {
+    public List<User> retriveAllUsers() {
         return userDaoService.findAll();
     }
 
+
     @GetMapping("/user/{id}")
-    public User retriveUser(@PathVariable int id) {
+    //Se cambia el User por un EntityModel
+    public EntityModel<User> retriveUser(@PathVariable int id) {
         User user = userDaoService.findOne(id);
+        //se pretende adjuntar un link para que se
+        //pueda regresar, no se puede agregar el endpoint Hardcoreado
+        //se tienen que hacer un obj para que sea dinamico
+
         if (user == null) {
             throw new UserNotFoundException("id:" + id);
-
         }
-        return user;
+        //un entityModel es un modelo del paramtro User por ejemplo
+        EntityModel<User> model = EntityModel.of(user);
+        WebMvcLinkBuilder linkToUsers = WebMvcLinkBuilder
+                .linkTo(WebMvcLinkBuilder
+                        .methodOn(this.getClass())
+                        .retriveAllUsers());
+
+        model.add(linkToUsers.withRel("link-to-users"));//etiqueta o rel para identificar el link
+
+        return model;
     }
 
     @PostMapping("/user")
@@ -43,7 +60,7 @@ public class UserResource {
     }
     @DeleteMapping("/user/{id}")
     public void deleteUser(@PathVariable int id){
-        User user = userDaoService.deleteUser(id);
+         User user = userDaoService.deleteUser(id);
         if(user == null) throw new UserNotFoundException("id: "+id);
     }
 
