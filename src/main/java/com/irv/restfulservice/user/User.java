@@ -3,9 +3,11 @@ package com.irv.restfulservice.user;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class User {
@@ -16,6 +18,17 @@ public class User {
     private String name;
     @Past(message = "La fecha aun no ha pasado") //la fecha tiene que ser antigua a hoy
     private Date birthDate;
+
+    @OneToMany(mappedBy = "user")//nombre de la variable en Post
+    private List<Post> posts;
+
+    public List<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
+    }
 
     public User() {
     }
